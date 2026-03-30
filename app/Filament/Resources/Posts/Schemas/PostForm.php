@@ -29,12 +29,23 @@ class PostForm
                 ->schema([
                     Group::make([
                         TextInput::make('title')
-                        ->minLength(5),
-                        TextInput::make('slug')->unique(ignoreRecord: true),
+                            ->minLength(5) // Validasi minimal 5 karakter
+                            ->validationMessages([
+                                'min' => 'Judul artikel terlalu pendek, minimal harus 5 karakter.', // Custom message 1
+                            ]),
+                        TextInput::make('slug')
+                            ->required()
+                            ->minLength(3) // Validasi minimal 3 karakter
+                            ->unique(ignoreRecord: true) // Validasi unik yang aman untuk proses edit
+                            ->validationMessages([
+                                'unique' => 'Slug ini sudah dipakai, silakan gunakan kata kunci lain.', // Custom message 2
+                                'min' => 'Slug minimal harus terdiri dari 3 karakter.',
+                            ]),
                         Select::make('category_id')
                             ->relationship('category', 'name')
                             ->preload()
-                            ->searchable(),
+                            ->searchable()
+                            ->required(),
                         ColorPicker::make('color'),
                     ])->columns(2),
                     MarkdownEditor::make('content'),
@@ -48,7 +59,8 @@ class PostForm
                     ->schema([
                         FileUpload::make('image')
                             ->disk('public')
-                            ->directory('posts'),
+                            ->directory('posts')
+                            ->required(),
                     ]),
 
                     // Section 3 : Meta \\
