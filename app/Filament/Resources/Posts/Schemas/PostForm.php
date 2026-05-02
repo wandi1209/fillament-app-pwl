@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Posts\Schemas;
 
+use App\Models\Category;
 use Filament\Forms\Components\Checkbox;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
@@ -43,7 +44,8 @@ class PostForm
                             ]),
                         Select::make('category_id')
                             ->relationship('category', 'name')
-                            ->preload()
+                            ->options(Category::all()->pluck('name', 'id'))
+                            // ->preload()
                             ->searchable()
                             ->required(),
                         ColorPicker::make('color'),
